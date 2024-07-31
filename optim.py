@@ -208,7 +208,9 @@ class MFAC(torch.optim.Optimizer):
         count = 0
         for group in self.param_groups:
             for p in group['params']:
-                p.add_(tmp[count:(count + p.numel())].reshape(p.shape), alpha=-group['lr'])
+                p.grad.data = tmp[count:(count + p.numel())].reshape(p.shape)
+                if group['lr'] != 0.0:
+                    p.add_(p.grad, alpha=-group['lr'])
                 count += p.numel()
 
 
